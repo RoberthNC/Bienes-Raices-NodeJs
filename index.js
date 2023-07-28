@@ -3,7 +3,12 @@ import usuarioRoutes from "./routes/usuarioRoutes.js"
 
 const app = express()
 
-app.use("/", usuarioRoutes)
+app.set("view engine", "pug")
+app.set("views", "./views")
+
+app.use(express.static("public"))
+
+app.use("/auth", usuarioRoutes)
 
 const PORT = 3000
 
