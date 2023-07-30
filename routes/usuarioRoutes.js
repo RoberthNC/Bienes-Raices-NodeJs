@@ -2,6 +2,7 @@ import express from "express"
 import 
 { 
     formularioLogin, 
+    autenticar,
     formularioRegistro, 
     registrar,
     confirmar,
@@ -14,6 +15,7 @@ import
 const router = express.Router()
 
 router.get("/login", formularioLogin)
+router.post("/login", autenticar)
 router.get("/registro", formularioRegistro)
 router.post("/registro", registrar)
 router.get("/confirmar/:token", confirmar)

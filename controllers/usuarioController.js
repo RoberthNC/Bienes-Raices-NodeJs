@@ -1,14 +1,61 @@
 import { check, validationResult } from "express-validator"
 import bcrypt from "bcrypt"
-
 import Usuario from "../models/Usuario.js"
-import { generarId } from "../helpers/tokens.js"
+import { generarId, generarJWT } from "../helpers/tokens.js"
 import { emailRegistro, emailOlvidePassword } from "../helpers/emails.js"
 
 const formularioLogin = (req, res) => {
     res.render("auth/login",{
-        pagina:"Iniciar Sesión"
+        pagina:"Iniciar Sesión",
+        csrfToken:req.csrfToken()
     })
+}
+
+const autenticar = async(req, res) => {
+    await check("email").isEmail().withMessage("El email es obligatorio").run(req)
+    await check("password").notEmpty().withMessage("El password es obligatorio").run(req)
+
+    const resultado = validationResult(req)
+
+    if(!resultado.isEmpty()){
+        return res.render("auth/login",{
+            pagina:"Inicia Sesión",
+            csrfToken:req.csrfToken(),
+            errores:resultado.array()
+        })
+    }
+
+    const usuario = await Usuario.findOne({where:{ email:req.body.email }})
+
+    if(!usuario){
+        return res.render("auth/login",{
+            pagina:"Inicia Sesión",
+            csrfToken:req.csrfToken(),
+            errores:[{msg:"El usuario no existe"}]
+        })
+    }
+
+    if(!usuario.confirmado){
+        return res.render("auth/login",{
+            pagina:"Inicia Sesión",
+            csrfToken:req.csrfToken(),
+            errores:[{msg:"Tu cuenta no ha sido confirmada"}]
+        })
+    }
+
+    if(!usuario.verificarPassword(req.body.password)){
+        return res.render("auth/login",{
+            pagina:"Inicia Sesión",
+            csrfToken:req.csrfToken(),
+            errores:[{msg:"El password es incorrecto"}]
+        })
+    }
+
+    const token = generarJWT({ id:usuario.id, nombre:usuario.nombre })
+
+    return res.cookie("_token", token, {
+        httpOnly: true,
+    }).redirect("/mis-propiedades")
 }
 
 const formularioRegistro = (req, res) => {
@@ -189,6 +236,7 @@ const nuevoPassword = async(req, res) => {
 
 export {
     formularioLogin,
+    autenticar,
     formularioRegistro,
     registrar,
     confirmar,
