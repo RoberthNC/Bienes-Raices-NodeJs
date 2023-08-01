@@ -6,8 +6,12 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "css": "postcss public/css/tailwind.css -o public/css/app.css --watch"
+    "server": "nodemon index.js",
+    "css": "postcss public/css/tailwind.css -o public/css/app.css --watch",
+    "js": "webpack --watch",
+    "dev": "concurrently \"npm run css\" \"npm run js\"",
+    "db:importar":"node ./seed/seeder.js -i",
+    "db:limpiar":"node ./seed/seeder.js -l"
   },
   "keywords": [],
   "author": "Roberto Núñez",
@@ -27,9 +31,12 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
+    "concurrently": "^8.2.0",
     "nodemon": "^3.0.1",
     "postcss": "^8.4.27",
     "postcss-cli": "^10.1.0",
-    "tailwindcss": "^3.3.3"
+    "tailwindcss": "^3.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   }
 }
