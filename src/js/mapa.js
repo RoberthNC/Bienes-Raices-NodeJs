@@ -1,14 +1,14 @@
 (function() {
-    const lat = document.querySelector("#lat").value || -8.1135356;
-    const lng = document.querySelector("#lng").value || -79.0237121;
-    const mapa = L.map('mapa').setView([lat, lng ], 13);
-    let marker;
+    const lat = document.querySelector("#lat").value || -8.1135356
+    const lng = document.querySelector("#lng").value || -79.0237121
+    const mapa = L.map('mapa').setView([lat, lng ], 13)
+    let marker
 
     const geocodeService = L.esri.Geocoding.geocodeService()
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mapa);
+    }).addTo(mapa)
 
     marker = new L.marker([lat, lng],{
         draggable: true,
@@ -26,8 +26,8 @@
 
             document.querySelector(".calle").textContent = resultado?.address?.Address ?? ""
             document.querySelector("#calle").value = resultado?.address?.Address ?? ""
-            document.querySelector("#lat").textContent = resultado?.latlng?.lat ?? ""
-            document.querySelector("#lng").textContent = resultado?.latlng?.lng ?? ""
+            document.querySelector("#lat").value = resultado?.latlng?.lat ?? ""
+            document.querySelector("#lng").value = resultado?.latlng?.lng ?? ""
         })
     })
 

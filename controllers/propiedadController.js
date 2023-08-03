@@ -19,7 +19,7 @@ const crear = async(req, res) => {
         csrfToken:req.csrfToken(),
         categorias,
         precios,
-        datos
+        datos:req.body
     })
 }
 
@@ -46,6 +46,8 @@ const guardar = async(req, res) => {
 
     const { titulo, descripcion, habitaciones, estacionamiento, wc, calle, lat, lng, precio:precioId, categoria:categoriaId } = req.body
 
+    const { id:usuarioId } = req.usuario
+
     try {
         const propiedadAlmacenada = await Propiedad.create({
             titulo,
@@ -56,8 +58,15 @@ const guardar = async(req, res) => {
             calle,
             lat,
             lng,
-            precioId
+            precioId,
+            categoriaId,
+            usuarioId,
+            imagen:""
         })
+
+        const { id } = propiedadAlmacenada
+
+        res.redirect(`/propiedades/agregar-imagen/${id}`)
     } catch (error) {
         console.log(error)
     }
